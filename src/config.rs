@@ -1,8 +1,13 @@
 use std::path::Path;
+use std::path::PathBuf;
 
 /// Config
 #[derive(Debug, serde::Deserialize)]
-pub struct Config {}
+pub struct Config {
+    /// The suggested mount point
+    #[serde(rename = "mount-point")]
+    pub mount_point: PathBuf,
+}
 
 impl Config {
     /// Load a config

@@ -14,12 +14,16 @@ fn main() -> anyhow::Result<()> {
     let tokio_rt = tokio::runtime::Builder::new_multi_thread()
         .enable_all()
         .build()?;
-    tokio_rt.block_on(async_main(config))?;
+    let result = tokio_rt.block_on(async_main(config));
 
-    Ok(())
+    unsafe {
+        dokany::shutdown();
+    }
+
+    result
 }
 
-async fn async_main(_config: Config) -> anyhow::Result<()> {
+async fn async_main(config: Config) -> anyhow::Result<()> {
     let dokany_version = dokany::version();
     let dokany_driver_version = dokany::driver_version();
     info!("Dokany Version: {dokany_version}");
@@ -30,10 +34,10 @@ async fn async_main(_config: Config) -> anyhow::Result<()> {
     let mut file_system_handle: tokio::task::JoinHandle<anyhow::Result<()>> = {
         let file_system = file_system.clone();
 
-        tokio::task::spawn_blocking(|| {
+        tokio::task::spawn_blocking(move || {
             let mut options = dokany::Options::new();
             options.set_version(209);
-            options.set_mount_point("M");
+            options.set_mount_point(&config.mount_point);
             options.set_option_flags(dokany::OptionFlags::MOUNT_MANAGER);
 
             dokany::main(options, file_system)?;
