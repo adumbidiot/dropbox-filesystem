@@ -1,20 +1,25 @@
+mod config;
 mod file_system;
 
-use file_system::DropboxFileSystem;
+use self::config::Config;
+use self::file_system::DropboxFileSystem;
+use anyhow::Context;
 use tracing::info;
 
 fn main() -> anyhow::Result<()> {
+    let config = Config::load("config.toml").context("failed to load config.toml")?;
+
     tracing_subscriber::fmt::init();
 
     let tokio_rt = tokio::runtime::Builder::new_multi_thread()
         .enable_all()
         .build()?;
-    tokio_rt.block_on(async_main())?;
+    tokio_rt.block_on(async_main(config))?;
 
     Ok(())
 }
 
-async fn async_main() -> anyhow::Result<()> {
+async fn async_main(_config: Config) -> anyhow::Result<()> {
     let dokany_version = dokany::version();
     let dokany_driver_version = dokany::driver_version();
     info!("Dokany Version: {dokany_version}");
