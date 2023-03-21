@@ -2,22 +2,28 @@ use anyhow::ensure;
 use anyhow::Context;
 use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;
+use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tracing::error;
 use tracing::info;
+use tracing::warn;
 
 /// A filesystem for dropbox
 #[derive(Clone)]
 pub struct DropboxFileSystem {
+    client: dropbox::Client,
     state: Arc<DropboxFileSystemState>,
 }
 
 impl DropboxFileSystem {
     /// A Dropbox filesystem
-    pub fn new() -> Self {
+    pub fn new(token: &str) -> Self {
+        let tokio_handle = tokio::runtime::Handle::current();
         Self {
+            client: dropbox::Client::new(token),
             state: Arc::new(DropboxFileSystemState {
+                tokio_handle,
                 mount_point: std::sync::Mutex::new(None),
             }),
         }
@@ -42,17 +48,27 @@ impl DropboxFileSystem {
 }
 
 struct DropboxFileSystemState {
+    tokio_handle: tokio::runtime::Handle,
     mount_point: std::sync::Mutex<Option<PathBuf>>,
 }
 
-impl dokany::Filesystem for DropboxFileSystem {
+impl dokany::FileSystem for DropboxFileSystem {
     fn create_file(
         &self,
         file_name: &[u16],
         _access_mask: dokany::AccessMask,
+        is_dir: &mut bool,
     ) -> dokany::sys::NTSTATUS {
         let file_name = PathBuf::from(OsString::from_wide(file_name));
         info!("CreateFile(file_name=\"{}\")", file_name.display());
+
+        if file_name.starts_with("\\System Volume Information") {
+            return dokany::sys::STATUS_NO_SUCH_FILE;
+        }
+
+        if file_name == Path::new("/") {
+            *is_dir = true;
+        }
 
         dokany::sys::STATUS_SUCCESS
     }
@@ -75,8 +91,40 @@ impl dokany::Filesystem for DropboxFileSystem {
     }
 
     fn find_files(&self, file_name: &[u16]) -> dokany::sys::NTSTATUS {
-        let file_name = PathBuf::from(OsString::from_wide(file_name));
-        info!("FindFiles(file_name=\"{}\")", file_name.display());
+        let file_name = OsString::from_wide(file_name);
+        info!(
+            "FindFiles(file_name=\"{}\")",
+            Path::new(&file_name).display()
+        );
+
+        let mut file_name = match file_name.into_string() {
+            Ok(file_name) => file_name,
+            Err(_e) => {
+                warn!("Could not convert into unicode");
+                return dokany::sys::STATUS_INTERNAL_ERROR;
+            }
+        };
+        
+        if file_name == "\\" {
+            file_name = String::new();
+        }
+
+        let result =
+            self.state
+                .tokio_handle
+                .block_on(self.client.list_folder(&dropbox::ListFolderArg {
+                    path: file_name.replace('\\', "/").into(),
+                }));
+                
+        let result = match result {
+            Ok(result) => result,
+            Err(e) => {
+                error!("failed to list folder: {e}");
+                return dokany::sys::STATUS_INTERNAL_ERROR;
+            }
+        };
+        
+        dbg!(result);
 
         dokany::sys::STATUS_SUCCESS
     }

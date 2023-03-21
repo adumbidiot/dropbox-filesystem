@@ -11,6 +11,10 @@ pub struct Config {
     /// Whether to debug the driver.
     #[serde(rename = "debug-driver", default)]
     pub debug_driver: bool,
+
+    /// The dropbox api token
+    #[serde(rename = "dropbox-token")]
+    pub dropbox_token: String,
 }
 
 impl Config {

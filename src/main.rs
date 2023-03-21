@@ -29,7 +29,7 @@ async fn async_main(config: Config) -> anyhow::Result<()> {
     info!("Dokany Version: {dokany_version}");
     info!("Dokany Driver Version: {dokany_driver_version}");
 
-    let file_system = DropboxFileSystem::new();
+    let file_system = DropboxFileSystem::new(&config.dropbox_token);
 
     let mut file_system_handle: tokio::task::JoinHandle<anyhow::Result<()>> = {
         let file_system = file_system.clone();
