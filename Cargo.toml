@@ -2,7 +2,10 @@
 name = "dropbox-filesystem"
 version = "0.0.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
 anyhow = "1.0.70"
 tokio = { version = "1.26.0", features = ["rt-multi-thread"] }
+tracing = "0.1.37"
+tracing-subscriber = "0.3.16"

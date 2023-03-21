@@ -1,4 +1,6 @@
 fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt::init();
+
     let tokio_rt = tokio::runtime::Builder::new_multi_thread()
         .enable_all()
         .build()?;
