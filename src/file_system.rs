@@ -4,6 +4,8 @@ use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;
 use std::path::PathBuf;
 use std::sync::Arc;
+use tracing::error;
+use tracing::info;
 
 /// A filesystem for dropbox
 #[derive(Clone)]
@@ -50,7 +52,7 @@ impl dokany::Filesystem for DropboxFileSystem {
         _access_mask: dokany::AccessMask,
     ) -> dokany::sys::NTSTATUS {
         let file_name = PathBuf::from(OsString::from_wide(file_name));
-        println!("CreateFile(file_name=\"{}\")", file_name.display());
+        info!("CreateFile(file_name=\"{}\")", file_name.display());
 
         dokany::sys::STATUS_SUCCESS
     }
@@ -63,7 +65,7 @@ impl dokany::Filesystem for DropboxFileSystem {
         _file_system_flags: &mut dokany::FileSystemFlags,
         mut file_system_name: dokany::WriteWideCStringCell<'_>,
     ) -> dokany::sys::NTSTATUS {
-        println!("GetVolumeInformation");
+        info!("GetVolumeInformation");
 
         volume_name.write("DropboxFileSystem");
         *maximum_component_length = 255;
@@ -74,14 +76,14 @@ impl dokany::Filesystem for DropboxFileSystem {
 
     fn find_files(&self, file_name: &[u16]) -> dokany::sys::NTSTATUS {
         let file_name = PathBuf::from(OsString::from_wide(file_name));
-        println!("FindFiles(file_name=\"{}\")", file_name.display());
+        info!("FindFiles(file_name=\"{}\")", file_name.display());
 
         dokany::sys::STATUS_SUCCESS
     }
 
     fn mounted(&self, mount_point: &[u16]) -> dokany::sys::NTSTATUS {
         let mount_point = PathBuf::from(OsString::from_wide(mount_point));
-        println!("Mounted at \"{}\"", mount_point.display());
+        info!("Mounted at \"{}\"", mount_point.display());
 
         *self
             .state
@@ -102,10 +104,10 @@ impl dokany::Filesystem for DropboxFileSystem {
 
         match mount_point {
             Some(mount_point) => {
-                println!("Unmounted from \"{}\"", mount_point.display());
+                info!("Unmounted from \"{}\"", mount_point.display());
             }
             None => {
-                println!("Unmounted, missing internal mount point");
+                error!("Unmounted, missing internal mount point");
             }
         }
 
