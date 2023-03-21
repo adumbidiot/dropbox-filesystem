@@ -104,7 +104,7 @@ impl dokany::FileSystem for DropboxFileSystem {
                 return dokany::sys::STATUS_INTERNAL_ERROR;
             }
         };
-        
+
         if file_name == "\\" {
             file_name = String::new();
         }
@@ -115,7 +115,7 @@ impl dokany::FileSystem for DropboxFileSystem {
                 .block_on(self.client.list_folder(&dropbox::ListFolderArg {
                     path: file_name.replace('\\', "/").into(),
                 }));
-                
+
         let result = match result {
             Ok(result) => result,
             Err(e) => {
@@ -123,7 +123,7 @@ impl dokany::FileSystem for DropboxFileSystem {
                 return dokany::sys::STATUS_INTERNAL_ERROR;
             }
         };
-        
+
         dbg!(result);
 
         dokany::sys::STATUS_SUCCESS
