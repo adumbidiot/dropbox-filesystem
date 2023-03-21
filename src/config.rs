@@ -7,6 +7,10 @@ pub struct Config {
     /// The suggested mount point
     #[serde(rename = "mount-point")]
     pub mount_point: PathBuf,
+
+    /// Whether to debug the driver.
+    #[serde(rename = "debug-driver", default)]
+    pub debug_driver: bool,
 }
 
 impl Config {

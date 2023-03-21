@@ -38,7 +38,11 @@ async fn async_main(config: Config) -> anyhow::Result<()> {
             let mut options = dokany::Options::new();
             options.set_version(209);
             options.set_mount_point(&config.mount_point);
-            options.set_option_flags(dokany::OptionFlags::MOUNT_MANAGER);
+            let mut option_flags = dokany::OptionFlags::MOUNT_MANAGER;
+            if config.debug_driver {
+                option_flags |= dokany::OptionFlags::DEBUG | dokany::OptionFlags::STDERR;
+            }
+            options.set_option_flags(option_flags);
 
             dokany::main(options, file_system)?;
 
@@ -50,6 +54,7 @@ async fn async_main(config: Config) -> anyhow::Result<()> {
 
     tokio::select! {
         result = &mut ctrl_c_handle => {
+            info!("Got ctrl+c");
             result??;
             file_system.unmount()?;
             file_system_handle.await??;
