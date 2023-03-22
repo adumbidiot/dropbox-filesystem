@@ -7,6 +7,9 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 anyhow = "1.0.70"
 dokany = { git = "https://github.com/adumbidiot/dokany-rs" }
+dropbox = { git = "https://github.com/adumbidiot/dropbox-rs" }
+serde = { version = "1.0.158", features = ["derive"] }
 tokio = { version = "1.26.0", features = ["rt-multi-thread", "signal", "macros"] }
+toml = "0.7.3"
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"
