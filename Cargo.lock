@@ -75,7 +75,7 @@ checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 [[package]]
 name = "dokany"
 version = "0.0.0"
-source = "git+https://github.com/adumbidiot/dokany-rs#1772132d6b19ac2b0db9d5a029611e269e35d402"
+source = "git+https://github.com/adumbidiot/dokany-rs#b632dd015bd26723923acd13a219a4c15dd7efec"
 dependencies = [
  "bitflags 2.0.2",
  "dokany-sys",
@@ -85,7 +85,7 @@ dependencies = [
 [[package]]
 name = "dokany-sys"
 version = "0.0.0"
-source = "git+https://github.com/adumbidiot/dokany-rs#1772132d6b19ac2b0db9d5a029611e269e35d402"
+source = "git+https://github.com/adumbidiot/dokany-rs#b632dd015bd26723923acd13a219a4c15dd7efec"
 dependencies = [
  "windows-sys 0.45.0",
 ]

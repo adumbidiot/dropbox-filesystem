@@ -62,7 +62,9 @@ impl dokany::FileSystem for DropboxFileSystem {
         let file_name = PathBuf::from(OsString::from_wide(file_name));
         info!("CreateFile(file_name=\"{}\")", file_name.display());
 
-        if file_name.starts_with("\\System Volume Information") {
+        if file_name.starts_with("\\System Volume Information")
+            || file_name.starts_with("\\$RECYCLE.BIN")
+        {
             return dokany::sys::STATUS_NO_SUCH_FILE;
         }
 
@@ -90,7 +92,11 @@ impl dokany::FileSystem for DropboxFileSystem {
         dokany::sys::STATUS_SUCCESS
     }
 
-    fn find_files(&self, file_name: &[u16]) -> dokany::sys::NTSTATUS {
+    fn find_files(
+        &self,
+        file_name: &[u16],
+        mut fill_find_data: dokany::FillFindData,
+    ) -> dokany::sys::NTSTATUS {
         let file_name = OsString::from_wide(file_name);
         info!(
             "FindFiles(file_name=\"{}\")",
@@ -124,7 +130,16 @@ impl dokany::FileSystem for DropboxFileSystem {
             }
         };
 
-        dbg!(result);
+        let mut find_data = dokany::FindData::new();
+        for entry in result.entries.iter() {
+            let name = entry["name"].as_str().unwrap();
+            let size = entry["size"].as_u64().unwrap();
+
+            find_data.set_file_name(name);
+            find_data.set_size(size);
+
+            fill_find_data.fill(&mut find_data);
+        }
 
         dokany::sys::STATUS_SUCCESS
     }
