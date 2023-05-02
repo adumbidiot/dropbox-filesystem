@@ -7,6 +7,6 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 anyhow = "1.0.70"
 dokany = { git = "https://github.com/adumbidiot/dokany-rs" }
-tokio = { version = "1.26.0", features = ["rt-multi-thread", "signal", "macros"] }
+tokio = { version = "1.28.0", features = ["rt-multi-thread", "signal", "macros"] }
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"
