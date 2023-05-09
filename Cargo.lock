@@ -16,9 +16,9 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
 name = "bitflags"
-version = "2.0.2"
+version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "487f1e0fcbe47deb8b0574e646def1c903389d95241dd1bbcc6ce4a715dfc0c1"
+checksum = "24a6904aef64d73cf10ab17ebace7befb918b82164785cb89907993be7f83813"
 
 [[package]]
 name = "cfg-if"
@@ -29,7 +29,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 [[package]]
 name = "dokany"
 version = "0.0.0"
-source = "git+https://github.com/adumbidiot/dokany-rs#55a1361299184e419574f9bd2cc8573b4aaa2b3c"
+source = "git+https://github.com/adumbidiot/dokany-rs#d9200551dc706b1b73d93241085ef231c9f55c2e"
 dependencies = [
  "bitflags",
  "dokany-sys",
@@ -39,7 +39,7 @@ dependencies = [
 [[package]]
 name = "dokany-sys"
 version = "0.0.0"
-source = "git+https://github.com/adumbidiot/dokany-rs#55a1361299184e419574f9bd2cc8573b4aaa2b3c"
+source = "git+https://github.com/adumbidiot/dokany-rs#d9200551dc706b1b73d93241085ef231c9f55c2e"
 dependencies = [
  "windows-sys",
 ]
@@ -72,9 +72,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.140"
+version = "0.2.144"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99227334921fae1a979cf0bfdfcc6b3e5ce376ef57e16fb6fb3ea2ed6095f80c"
+checksum = "2b00cc1c228a6782d0f076e7b232802e0c5689d41bb5df366f2a6b6621cfdfe1"
 
 [[package]]
 name = "log"
